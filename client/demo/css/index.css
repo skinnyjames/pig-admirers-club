@@ -19,12 +19,20 @@ header {
   height: 50px;
 
 }
+.slides {
+  width: 100vw;
+  overflow:hidden;
+  display: flex;
+}
+
 nav {
   position: fixed;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-family: 'Oswald';
+  font-family: 'Slabo 27px', serif;
+
   color: rgba(255, 255, 255, .8);
   width: 100%;
   height: 50px;
@@ -57,22 +65,33 @@ nav ul li:hover {
   cursor: pointer;
   border-bottom: 1px solid rgba(255, 255, 255, .8);
 }
-div.hero {
+.slide {
+  min-width: 100vw;
   height: 650px;
+  transition: all 1s ease-in-out;
+}
+div.hero {
   display:flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: 'Amatic SC', cursive;
 }
-
+h1, h2 {
+  font-family: 'Amatic SC', cursive;
+}
 div.hero h1 {
   font-size: 100px;
   margin-bottom: 0;
   margin-top: 0;
   font-family: 'Lobster', cursive;
 }
-
+h1 {
+  font-size: 100px;
+}
+h2 {
+  font-size: 60px;
+}
 div.hero h1 img {
   height: 300px;
 }
@@ -88,6 +107,8 @@ div.actions {
 button {
   cursor: pointer;
   height: 36px;
+  font-family: 'Slabo 27px', serif;
+
   background: transparent;
   display: flex;
   justify-content: center;
@@ -172,4 +193,13 @@ footer {
     rgba(134, 141, 238, .2)
   ),
   url('../img/felt.png') repeat;  
+}
+.step-1 {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.step-2 {
+  cursor: pointer;
 }
