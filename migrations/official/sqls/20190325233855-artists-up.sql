@@ -3,6 +3,7 @@ create table artists(
   id serial primary key,
   first_name varchar(255) not null,
   last_name varchar(255) not null,
+  born date not null,
   email varchar not null unique,
   password_hash varchar not null,
   password_salt varchar not null,
