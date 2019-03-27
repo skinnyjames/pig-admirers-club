@@ -1,4 +1,3 @@
-/* Replace with your SQL commands */
 create table artists( 
   id serial primary key,
   first_name varchar(255) not null,

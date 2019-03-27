@@ -15,11 +15,11 @@ $$;
 create table concepts(
   id serial primary key,
   guid uuid not null default uuid_generate_v1(),
+  artist_id integer references artists(id) not null,
   title varchar(355),
   media varchar not null,
   description text,
   price float not null,
-  artist_id integer references artists(id) not null,
   status concept_status default 'new',
   created_at timestamp not null default now(),
   updated_at timestamp not null default now(), 
