@@ -17,3 +17,9 @@
     }
   }
 </script>
+
+<style>
+  div {
+    text-transform: uppercase;
+  }
+</style>
