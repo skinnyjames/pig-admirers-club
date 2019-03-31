@@ -4,7 +4,10 @@ import Validator from './../lib/validator'
 import moment from 'moment'
 
 const artistSchema = new Validator({
-  presence: ['first_name', 'last_name', 'bio', 'born', 'email']
+  presence: ['first_name', 'last_name', 'bio', 'born', 'email'],
+  regex: {
+    born: /^\d{2}\/\d{2}\/\d{4}$/
+  }
 })
 
 const passwordReset = new Validator({
@@ -30,12 +33,12 @@ const $artist = {
     }
   },
 
-  inviteArtist(artistData: any): Promise<Object> {
+  async inviteArtist(artistData: any): Promise<Object> {
     artistData.expires = moment().add(1, 'day').format()
     artistData.born = moment(artistData.born).format()
     let sql = 'with new_artist as (' + 
       'insert into artists(first_name, last_name, bio, born, email)' +
-      'values(${first_name}, ${last_name}, ${bio}, ${born}, ${email} returning id' + 
+      'values(${first_name}, ${last_name}, ${bio}, ${born}, ${email}) returning id' + 
     ') insert into invites(artist_id, expires) values ((select id from new_artist), ${expires}) returning guid'
 
     return db.one(sql, artistData)

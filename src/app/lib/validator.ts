@@ -59,7 +59,7 @@ class Validator{
         let value: Number = parseInt(valueString)
         switch(symbol){
           case '=':
-            if(!(things[x].length === value){
+            if(!(things[x].length === value)){
               this.errors.push({
                 field: x,
                 message: x + ' must be ' + value + ' characters long'
@@ -67,7 +67,7 @@ class Validator{
               break;
             }
           case '>':
-            if(!(things[x].length > value){
+            if(!(things[x].length > value)){
               this.errors.push({
                 field: x,
                 message: x + ' must be greater than ' + value + ' characters'
