@@ -8,7 +8,8 @@ create table artists(
   password_salt varchar not null,
   bio text,
   image_url varchar(255),
-  owner boolean not null
+  owner boolean not null,
+  verified boolean not null
 );
 
 /* case insensitive email */

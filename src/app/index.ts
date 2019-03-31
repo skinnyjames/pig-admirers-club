@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   // check for first installation
   setup.setupRequired()
-  .then(bool => {
+  .then((bool: boolean) => {
     if (bool) {
       res.sendFile(path.join(__dirname, 'html', 'setup.html'))
     } else {
