@@ -5,6 +5,9 @@
     "module": "es2015",
     "moduleResolution": "node"
   },
+  "files": [
+    "./vue-shims.d.ts"
+  ],
   "include": [
     "club.ts"
   ]
