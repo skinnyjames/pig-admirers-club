@@ -43,5 +43,6 @@ module.exports = {
   }, 
   plugins: [
     new VueLoaderPlugin()
-  ]
+  ],
+  devtool: '#eval-source-map'
 }

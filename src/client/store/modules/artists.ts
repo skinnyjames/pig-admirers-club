@@ -4,7 +4,9 @@ import { router } from './../../club'
 const state = {
   data: null,
   meta: {
-    error: {}
+    error: {},
+    success: null,
+    messages: []
   }, 
   login: {
     email: null,
@@ -17,7 +19,7 @@ const state = {
   concepts: [],
   showNewConcept: false,
   newConcept: {
-    title: null,
+    title: 'Untitled',
     media: null,
     description: null,
     price: null,
@@ -77,8 +79,32 @@ const actions = {
       context.commit('error', err)
     }
   },
+  async deleteConcept(context, id) {
+    try {
+      let response = await fetch(`/concepts/${id}`, {method: 'delete'})
+      if (response.status == 200) {
+        context.commit('messages', ['Concept deleted'])
+      } else {
+        context.commit('messages', ['Error occured'])
+      }
+    } catch(err) {
+      context.commit('error', err)
+    }
+  },
+  async getConcepts(context) {
+    let response = await fetch('/concepts/fetch', { method: 'get'})
+    if (response.status == 200) {
+      let body = await response.json()
+      context.commit('concepts', body)
+    } else {
+      let body = await response.json()
+      context.commit('error', body)
+    }
+  },
   async newConcept(context) {
     try {
+      context.commit('confirm', false)
+
       let response = await fetch('/concepts/new', { 
         method: 'post', 
         headers: { 'Content-type': 'application/json'}, 
@@ -88,8 +114,13 @@ const actions = {
         let errors = await response.json()
         context.commit('resetNewConceptErrors')
         context.commit('newConceptErrors', errors.errors)
+        context.commit('confirm', false)
       } else {
-        
+        context.commit('resetNewConceptErrors')
+        context.commit('resetNewConcept')
+        context.commit('confirm', true)
+        context.commit('hideNewConcept')
+        context.dispatch('getConcepts')
       }
     } catch (err) {
       context.commit('error', err)
@@ -154,11 +185,29 @@ const mutations = {
       price: null,
     }
   },
+  resetNewConcept(state) {
+    state.newConcept = {
+      title: 'Untitled',
+      media: null,
+      description: null,
+      price: null,
+      images: []
+    }
+  },
   showNewConcept(state) {
     state.showNewConcept = true
   },
   hideNewConcept(state) {
     state.showNewConcept = false
+  },
+  confirm(state, value: boolean) {
+    state.meta.success = value
+  },
+  messages(state, messages) {
+    state.meta.messages = messages
+  },
+  concepts(state, concepts) {
+    state.concepts = concepts
   }
 }
 

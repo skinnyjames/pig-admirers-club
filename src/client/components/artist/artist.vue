@@ -1,7 +1,8 @@
 <template>
   <div v-if="artist" class="dashboard">
     <div class="dashboard__control">
-      <div class="dashboard__welcome">
+        <vk-notification position="bottom-center" status="success" :messages.sync="messages"></vk-notification>      
+        <div class="dashboard__welcome">
         <h1>Welcome, {{ artist.first_name }} {{ artist.last_name}}</h1>
         <div class="dashboard__actions">
           <vk-button v-on:click="newConcept" type="primary">
@@ -12,7 +13,12 @@
           </vk-button>
         </div>
       </div>
+      <div class="concepts">
+        <concept @refresh="refresh" v-bind:key="concept.id" v-for="concept in concepts" v-bind:concept="concept">
+        </concept>
+      </div>  
     </div>
+
     <div v-if="showNewConcept" class="concept__modal">
       <div class="concept__modal__body uk-panel-scrollable">
         <h3 style="display:flex;justify-content:space-between">
@@ -26,7 +32,7 @@
               <div class="uk-form-controls">
                 <input type="text" v-model="title" :class="{'uk-input': true, 'uk-form-danger': !!titleError}" id="title">
               </div>
-              <span v-if="!!titlError" class="error">{{ titleError }}</span>
+              <span v-if="!!titleError" class="error">{{ titleError }}</span>
             </div>
             <div>
               <label class="uk-form-label" for="media">Media</label>
@@ -84,7 +90,7 @@
             </div>
           </div>
         </div>
-        <vk-button @click="submitConcept" class="uk-width-1-1 uk-button-primary">Submit</vk-button>
+        <vk-button @click="submitConcept" style="margin-top: 20px;" class="uk-width-1-1 uk-button-primary">Submit</vk-button>
       </div>
     </div>
   </div>
@@ -94,14 +100,25 @@
   import FileUpload from 'vue-upload-component'
   //@ts-ignore
   import mime from 'mime-types'
+  import Concept from './concept.vue'
   export default {
     components: {
+      'concept': Concept,
       'file-upload': FileUpload
     },
     async mounted() {
       await this.$store.dispatch('artist/get')
+      await this.$store.dispatch('artist/getConcepts')
     },
     computed: {
+      messages: {
+        get() {
+          return this.$store.state.artist.meta.messages
+        }, 
+        set(value: any) {
+          this.$store.commit('artist/messages', value)
+        }
+      },
       title: {
         get() {
           return this.$store.getters['artist/newConcept'].title
@@ -157,6 +174,12 @@
       },
       images() {
         return this.$store.state.artist.newConcept.images
+      },
+      success() {
+        return this.$store.state.artist.meta.success
+      },
+      concepts() {
+        return this.$store.state.artist.concepts
       }
     },
     methods: {
@@ -173,9 +196,14 @@
       doNothing() {
 
       },
-      async sumbitConcept() {
-        console.log('dispatch new concept')
+      async refresh() {
+        await this.$store.dispatch('artist/getConcepts')
+      },
+      async submitConcept() {
         await this.$store.dispatch('artist/newConcept')
+        if (this.success) {
+          this.$store.commit('artist/messages', ['Added new concept!'])
+        }
       },
       removeImage(id: any) {
         this.$store.commit('artist/removeImage', id)
@@ -223,7 +251,6 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
   }
   div.concept__modal__form {
     display: flex;
@@ -238,5 +265,4 @@
     justify-content: space-between;
     align-items: center;
   }
-
 </style>

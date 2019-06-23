@@ -26,6 +26,7 @@
     height: 50px;
   }
   nav {
+    z-index: 2;
     position: fixed;
     display: flex;
     align-items: center;
