@@ -2,6 +2,7 @@ const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
+  mode: 'development',
   entry: {
     club: './src/client/club.ts'
   },
@@ -36,7 +37,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.js'
     },
     extensions: ['.tsx', '.ts', '.js', '.vue', '.json']
   }, 

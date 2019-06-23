@@ -1,9 +1,12 @@
 <template>
-  <club-header></club-header>
+  <div id="container">
+    <club-header></club-header>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script lang="ts">
-  import Header from './header'
+  import Header from './header.vue'
   import { mapState } from 'vuex'
   export default {
     mounted() {
@@ -13,16 +16,13 @@
       'club-header': Header
     },
     computed: {
-      hello(): string {
-        return this.$store.state.artists.details.hello
-      }
     }
   }
 </script>
 
 <style>
-  div {
-    text-transform: uppercase;
+  div#container {
+    min-height: calc(100vh - 50px);
   }
   html, body {
     margin: 0;

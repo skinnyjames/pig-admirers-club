@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
   })
 
   function addInvite(data: any) {
-    artist.addNewArist(data)
+    artist.addInitialArist(data)
     .then((_: any) => {
       res.render('setup', {success: true})
     })

@@ -5,6 +5,10 @@ export interface iValidationError {
   errors: Array<Object>
 }
 
+export interface iSessionError {
+  message: string
+}
+
 export class ValidationError extends Error implements iValidationError {
   errors: Array<Object>
 
@@ -13,3 +17,5 @@ export class ValidationError extends Error implements iValidationError {
     this.errors = errors
   }
 }
+
+export class SessionError extends Error implements iSessionError {}

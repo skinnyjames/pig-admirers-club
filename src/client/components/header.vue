@@ -2,7 +2,7 @@
   <header>
     <nav>
       <ul class="left">
-        <li><a href="index.html"><img src='img/logo.png' height="40"></a></li>
+        <li><a href="index.html"><img src='img/logo.png' style="height:40px;"></a></li>
         <li>About</li>
         <li>Shop</li>
         <li>Gallery</li>
