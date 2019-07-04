@@ -1,6 +1,8 @@
 import multer from 'multer'
-import { Request, Router } from 'express'
-import conceptModel from './../models/concept'
+import { Router } from 'express'
+import { ISessionRequest } from './../interfaces/session'
+import { ConceptModel } from './../models/concept'
+import { AuthMiddleware } from './../middleware/auth'
 import { ValidationError } from '../lib/errors'
 import path from 'path'
 import move from 'move-file'
@@ -12,10 +14,6 @@ const readdir = util.promisify(fs.readdir)
 const unlink = util.promisify(fs.unlink)
 const stat = util.promisify(fs.stat)
 
-interface ISessionRequest extends Request {
-  session: any
-  user: any
-}
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/temp/')
@@ -27,7 +25,6 @@ var storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-
 const router =  Router()
 router.post('/upload', upload.single('file'), (req, res) => {
   res.send({
@@ -36,20 +33,21 @@ router.post('/upload', upload.single('file'), (req, res) => {
   })
 })
 
-router.delete('/:id', async (req: ISessionRequest, res) => {
-  if (!req.user) {
-    res.statusCode = 500
-    res.send('unauthorized')
-  } else {
+router.get('/all', async(req, res) => {
+  let concepts = await ConceptModel.all()
+  res.send(concepts)
+})
+
+router.delete('/:id', AuthMiddleware.authArtist(), async (req: ISessionRequest, res) => {
     try {
       let userId = req.user.id
-      let concept: any = await conceptModel.get(req.params.id)
+      let concept: any = await ConceptModel.get(req.params.id)
       if ((concept.artist_id != userId) || !!concept.order_id) {
         console.log(concept, req.user)
         res.statusCode = 401
         res.send('unauthorized')
       } else {
-        let images = await conceptModel.images(concept.id)
+        let images = await ConceptModel.images(concept.id)
         let imageNames = images.map((image: any) => {
           return image.image_name
         })
@@ -70,7 +68,7 @@ router.delete('/:id', async (req: ISessionRequest, res) => {
           return unlink(`public/gallery/${temp}`)
         })
         await Promise.all(unlinks)
-        await conceptModel.delete(concept.id)
+        await ConceptModel.destroy(concept.id)
         res.send('deleted')
       }
 
@@ -79,61 +77,50 @@ router.delete('/:id', async (req: ISessionRequest, res) => {
       res.statusCode = 500
       res.send(err)
     }
-  }
 })
 
-router.get('/fetch', async (req: ISessionRequest, res) => {
-  if (!req.user) {
+router.get('/fetch', AuthMiddleware.authArtist(), async (req: ISessionRequest, res) => {
+  try {
+    let id = req.user.id
+    let concepts = await ConceptModel.byUser(id)
+    res.send(concepts)
+  } catch (err) {
     res.statusCode = 500
-    res.send('unauthorized')
-  } else {
-    try {
-      let id = req.user.id
-      let concepts = await conceptModel.byUser(id)
-      res.send(concepts)
-    } catch (err) {
-      res.statusCode = 500
-      res.send(err)
-    }
+    res.send(err)
   }
 })
 
-router.post('/new', async (req: ISessionRequest, res) => {
+router.post('/new', AuthMiddleware.authArtist(), async (req: ISessionRequest, res) => {
   let conceptData = req.body
-  if (!req.user) {
-    res.statusCode = 500
-    res.send('unauthorized')
-  } else {
-    try {
-      conceptData.artistId = req.user.id
-      let id = await conceptModel.create(conceptData)
-      let files = conceptData.images.map((image: any) => { return image.response })
-      await conceptModel.createImages(id, files)
-      // migrate images 
-      let moves = files.map((file: any) => {
-        let oldPath = `public/temp/${file.filename}`
-        let newPath = `public/gallery/${file.filename}`
-        return move(oldPath, newPath, {overwrite: false})
-      })
-      await Promise.all(moves)
+  try {
+    conceptData.artistId = req.user.id
+    let id = await ConceptModel.create(conceptData)
+    let files = conceptData.images.map((image: any) => { return image.response })
+    await ConceptModel.createImages(id, files)
+    // migrate images 
+    let moves = files.map((file: any) => {
+      let oldPath = `public/temp/${file.filename}`
+      let newPath = `public/gallery/${file.filename}`
+      return move(oldPath, newPath, {overwrite: false})
+    })
+    await Promise.all(moves)
 
-      // clear temp
-      const tempFiles = await readdir('public/temp')
-      const unlinks = tempFiles.map((temp) => {
-        return unlink(`public/temp/${temp}`)
-      })
-      await Promise.all(unlinks)
-      res.statusCode = 200
-      res.send('Success!')
-    } catch (err) {
-      if (err instanceof ValidationError) {
-        res.statusCode = 401
-        res.send(err)
-      } else {
-        console.log(err)
-        res.statusCode = 500
-        res.send('Error occurred')
-      }
+    // clear temp
+    const tempFiles = await readdir('public/temp')
+    const unlinks = tempFiles.map((temp) => {
+      return unlink(`public/temp/${temp}`)
+    })
+    await Promise.all(unlinks)
+    res.statusCode = 200
+    res.send('Success!')
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      res.statusCode = 401
+      res.send(err)
+    } else {
+      console.log(err)
+      res.statusCode = 500
+      res.send('Error occurred')
     }
   }
 })

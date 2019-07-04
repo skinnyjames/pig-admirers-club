@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="landing">
     <learn></learn>
     <div class="about about2">
       <div class="words">
@@ -38,7 +38,7 @@
 
 <style>
 
-h1, h2 {
+h1, h2, .hero h2 {
   font-family: 'Amatic SC', cursive;
 }
 
@@ -49,7 +49,7 @@ h2 {
   font-size: 60px;
 }
 
-.about button {
+.landing button {
   cursor: pointer;
   height: 36px;
   font-family: 'Slabo 27px', serif;
@@ -63,7 +63,7 @@ h2 {
   text-transform: uppercase;
   transition: background-color .2s ease-in-out;
 }
-.about button:hover {
+.landing button:hover {
   background-color: rgba(134, 141, 238, 1);
 }
 

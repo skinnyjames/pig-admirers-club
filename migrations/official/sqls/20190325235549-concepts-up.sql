@@ -20,6 +20,7 @@ create table concepts(
   media varchar not null,
   description text,
   price float not null,
+  image_name varchar,
   status concept_status default 'new',
   created_at timestamp not null default now(),
   updated_at timestamp not null default now(), 

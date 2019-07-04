@@ -57,6 +57,7 @@
     align-items: center;
     border: 1px solid #ccc;
     position: relative;
+    box-shadow: 2px 2px 2px rgba(0,0,0,.3);
   }
   .concept__title {
     font-size: 20px;

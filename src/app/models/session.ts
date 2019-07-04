@@ -1,4 +1,5 @@
 import db from './../lib/db'
+import { Session } from './../interfaces/session'
 import { SessionError } from './../lib/errors'
 import moment from 'moment'
 
@@ -12,9 +13,9 @@ interface Check {
 
 const session$ = {
 
-  async getSession(id: String): Promise<Object> {
+  async getSession(id: String): Promise<Session> {
     let sql = 'select * from sessions where id = ${id}'
-    let session = await db.oneOrNone(sql, {id: id})
+    let session: Session = await db.oneOrNone(sql, {id: id})
     if (!session) {
       throw new SessionError('no session')
     } else {

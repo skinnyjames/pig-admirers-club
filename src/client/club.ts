@@ -9,6 +9,7 @@ import store from './store/index'
 import Home from './components/home.vue'
 import Artist from './components/artist/artist.vue'
 import ArtistLogin from './components/artist/login.vue'
+import Shop from './components/shop/shop.vue'
 import '@vuikit/theme'
 Vue.config.devtools = true
 Vue.use(Vuikit)
@@ -19,7 +20,8 @@ Vue.use(Vuex)
 const routes = [
   { path: '/', component: Home }, 
   { path: '/artist', component: Artist },
-  { path: '/artist/login', component: ArtistLogin }
+  { path: '/artist/login', component: ArtistLogin },
+  { path: '/shop', component: Shop }
 ]
 
 export const router = new Router({

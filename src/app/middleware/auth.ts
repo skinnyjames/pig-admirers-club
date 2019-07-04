@@ -1,27 +1,43 @@
 import sessionModel from './../models/session'
-import artistModel from './../models/artist'
-import { SessionError } from './../lib/errors'
+import { Session, AuthType } from './../interfaces/session'
+import { ArtistModel } from './../models/artist'
 
-export = async (req: any, res: any, next: any) => {
-  console.log(req.cookies)
-  if (req.cookies.pigs) {
-    let cookie = JSON.parse(req.cookies.pigs)
-    let sessionId = cookie.sessionId
-    try {
-      req.session = await sessionModel.getSession(sessionId)
-      if (req.session.user_type == 'artist') {
-        req.user = await artistModel.get(req.session.user_id)
-      }
-      await sessionModel.updateSession(sessionId)
-      next()
-    } catch (err) {
-      if (err instanceof SessionError) {
-        next()
+export namespace AuthMiddleware {
+
+  export function authPatron() {
+    return auth(AuthType.PATRON)
+  }
+
+  export function authArtist() {
+    return auth(AuthType.ARTIST)
+  }
+
+  function auth(type: AuthType) {
+    return async (req: any, res: any, next: any) => {
+      if (req.cookies.pigs) {
+        let cookie = JSON.parse(req.cookies.pigs) 
+        let sessionId = cookie.sessionId
+        try {
+          let session: Session = await sessionModel.getSession(sessionId) 
+          if (session.user_type == type) {
+            req.user = await ArtistModel.get(session.user_id)
+            await sessionModel.updateSession(sessionId)
+            next()
+          } else {
+            sendRedirect(res)
+          }
+        } catch (err) {
+          sendRedirect(res)
+        }
       } else {
-        next(new Error('bad session'))
+        sendRedirect(res)
       }
     }
-  } else {
-    next()
+  }
+
+  function sendRedirect(res: any) {
+    res.statusCode = 302
+    res.send("You are not authorized to access this page")
   }
 }
+

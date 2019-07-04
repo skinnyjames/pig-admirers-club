@@ -2,9 +2,9 @@
   <header>
     <nav>
       <ul class="left">
-        <li><a href="index.html"><img src='img/logo.png' style="height:40px;"></a></li>
+        <li><router-link to="/"><img src='img/logo.png' style="height:40px;"></router-link></li>
         <li>About</li>
-        <li>Shop</li>
+        <li><router-link to="/shop">Shop</router-link></li>
         <li>Gallery</li>
         <li>Artists</li>
       </ul>

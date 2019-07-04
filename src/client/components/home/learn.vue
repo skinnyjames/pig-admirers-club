@@ -1,7 +1,7 @@
 <template>
   <div class="learn slides">
     <div class="hero slide">
-      <img src="/img/box.png" height="50%">
+      <img src="/img/box.png" style="height: 50%;">
       <h2>
         from the Studio to your Front Door.
       </h2>
