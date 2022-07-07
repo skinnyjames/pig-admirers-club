@@ -29,7 +29,7 @@
     "generate-password": "^1.4.1",
     "mailgun-es6": "^1.1.4",
     "mime-types": "^2.1.24",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "move-file": "^1.2.0",
     "multer": "^1.4.1",
     "mv": "^2.1.1",
